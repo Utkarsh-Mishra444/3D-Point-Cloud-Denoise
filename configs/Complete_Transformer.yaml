@@ -1,0 +1,61 @@
+data:
+  data_dir: data/objects/
+  dataset: PUNet
+  augment: true
+  use_rgb_features: false
+  workers: 4
+  npoints: 2048
+diffusion:
+  timesteps: 1500
+  sampling_timesteps: 15
+  objective: pred_noise
+  schedule: linear
+  sampling_strategy: DDPM
+  loss_type: mse
+  beta_start: 1.e-4
+  beta_end: 0.03
+  t0: 1.e-4
+  T: 1.0
+  ot_ode: true
+model:
+  type: PVD
+  ema: true
+  in_dim: 3
+  extra_feature_channels: 0  # No extra features
+  out_dim: 3
+  time_embed_dim: 64        # Set to match positional encoding dimension
+  dropout: 0.1               # Standard dropout rate
+  EMA:
+    decay: 0.999
+  PVD:
+    use_global_embedding: false
+    feat_embed_dim: 64       # Match positional encoding output dimension
+    transformer_heads: 16      # Reduced number of heads
+    transformer_layers: 8     # Number of encoder layers
+    transformer_decoder_layers: 8  # Number of decoder layers
+    transformer_ffn_dim: 512  # Feedforward network dimension
+training:
+  optimizer:
+    type: AdamW
+    lr: 3.e-4
+    beta1: 0.9
+    beta2: 0.999
+    weight_decay: 1.0e-05
+  scheduler:
+    type: constant
+    lr_gamma: 0.999
+  grad_clip:
+    enabled: true
+    value: 1.0
+  bs: 20
+  overfit: false
+  amp: true
+  steps: 200_000
+  accumulation_steps: 1
+  log_interval: 10
+  save_interval: 20000
+  viz_interval: 1000
+  seed: 42
+sampling:
+  bs: 16
+  num_iter: 8

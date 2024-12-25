@@ -1,0 +1,109 @@
+# Filename: configs/PVD_default.yaml
+
+data:
+  data_dir: data/objects/
+  dataset: PUNet
+  augment: true
+  use_rgb_features: false
+  workers: 4
+  npoints: 2048
+
+diffusion:
+  timesteps: 1000
+  sampling_timesteps: 10
+  objective: pred_noise
+  schedule: linear
+  sampling_strategy: DDPM
+  loss_type: mse
+  beta_start: 1.e-4
+  beta_end: 0.02
+  t0: 1.e-4
+  T: 1.0
+  ot_ode: true
+  cond_x1: false
+  add_x1_noise: false
+  weight_loss: false
+  symmetric: true
+  loss_multiplier: 1.0
+# Updated configuration sections for your YAML file
+
+model:
+  type: PVD
+  ema: true
+  in_dim: 4
+  extra_feature_channels: 0
+  out_dim: 4
+  time_embed_dim: 64
+  dropout: 0.15
+  EMA:
+    decay: 0.999
+  PVD:
+    use_global_embedding: false
+    global_embedding_dim: 1024
+    feat_embed_dim: 64
+    transformer_heads: 8
+    transformer_layers: 6
+    transformer_ffn_dim: 256
+    out_mlp: 128
+
+    attention_type: linear
+    attention_heads: 4
+    size: large
+    attentions:
+    - 0
+    - 0
+    - 0
+    - 1
+    channels:
+    - 32
+    - 64
+    - 128
+    - 256
+    - 512
+    voxel_resolutions:
+    - 32
+    - 16
+    - 8
+    - 8
+    n_sa_blocks:
+    - 1
+    - 2
+    - 1
+    - 1
+    n_fp_blocks:
+    - 1
+    - 2
+    - 1
+    - 1
+    radius:
+    - 0.1
+    - 0.2
+    - 0.4
+    - 0.8
+
+training:
+  optimizer:
+    type: AdamW
+    lr: 3.e-4
+    beta1: 0.9
+    beta2: 0.999
+    weight_decay: 1.0e-05
+  scheduler:
+    type: constant
+    lr_gamma: 0.999
+  grad_clip:
+    enabled: true
+    value: 1.0
+  bs: 32
+  overfit: false
+  amp: true
+  steps: 100_000
+  accumulation_steps: 1
+  log_interval: 10
+  save_interval: 10000
+  viz_interval: 10000
+  seed: 42
+
+sampling:
+  bs: 32
+  num_iter: 8
